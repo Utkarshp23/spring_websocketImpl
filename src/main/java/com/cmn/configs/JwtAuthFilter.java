@@ -1,5 +1,6 @@
 package com.cmn.configs;
 
+import com.cmn.dao.UserDao;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +20,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    private final UserDetailsService userDetailsService;
+    private final UserDao userDao;
     private final JwtTokenUtil jwtTokenUtil;
 
     @Override
@@ -36,7 +37,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String userEmail = jwtTokenUtil.getUsernameFromToken(jwtToken); // TODO to be implemented
 
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
+            UserDetails userDetails= userDao.findByEmail(userEmail);
 
             final boolean isTokenValid = jwtTokenUtil.validateToken(jwtToken, userDetails);
 
